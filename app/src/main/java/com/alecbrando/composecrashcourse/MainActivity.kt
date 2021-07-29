@@ -3,78 +3,57 @@ package com.alecbrando.composecrashcourse
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.alecbrando.composecrashcourse.ui.theme.ComposeCrashCourseTheme
+import kotlinx.coroutines.launch
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val fontFamily = FontFamily(
-            Font(R.font.electrolize_regular, FontWeight.Thin)
-        )
         setContent {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFF101010))
-            ) {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.Green,
-                                fontSize = 50.sp
-                            )
-                        ) {
-                           append("J")
+            val scaffoldState = rememberScaffoldState()
+            var textFieldState by remember {
+                mutableStateOf("")
+            }
+
+            val scope = rememberCoroutineScope()
+
+            Scaffold(modifier = Modifier.fillMaxSize(), scaffoldState = scaffoldState) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 30.dp)
+                ) {
+                    TextField(
+                        value = textFieldState,
+                        onValueChange = {
+                            textFieldState = it
+                        }, label = { Text("Enter your name") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = {
+                        scope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar(message = "Hello $textFieldState")
                         }
-                        append("etpack ")
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.Green,
-                                fontSize = 50.sp
-                            )
-                        ) {
-                            append("C")
-                        }
-                        append("ompose")
-                    },
-                    color = Color.White,
-                    fontSize = 30.sp,
-                    fontFamily = fontFamily,
-                    textAlign = TextAlign.Center,
-                    textDecoration = TextDecoration.LineThrough
-                )
+                    }) {
+                        Text(text = "Please greet me")
+                    }
+                }
             }
         }
     }
 }
+
+
 
 
